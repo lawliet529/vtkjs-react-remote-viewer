@@ -13,9 +13,9 @@ const RemoteRenderView = ({ viewId = '-1', client = null }) => {
       rpcWheelEvent: "viewport.mouse.zoom.wheel",
     });
     // default of 0.5 causes 2x size labels on high-DPI screens. 1 good for demo, not for production.
-    if (window.location.hostname.split(".")[0] === "localhost") {
-      view.current.setInteractiveRatio(1);
-    }
+    // if (window.location.hostname.split(".")[0] === "localhost") {
+    //   view.current.setInteractiveRatio(1);
+    // }
 
     view.current.setContainer(viewRef.current);
     window.addEventListener("resize", view.current.resize);

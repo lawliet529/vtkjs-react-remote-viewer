@@ -3,7 +3,10 @@ import SmartConnect from "wslink/src/SmartConnect";
 
 import protocols from "./protocols";
 
-import { connectImageStream } from "vtk.js/Sources/Rendering/Misc/RemoteView";
+import {
+  connectImageStream,
+  disconnectImageStream,
+} from "vtk.js/Sources/Rendering/Misc/RemoteView";
 
 vtkWSLinkClient.setSmartConnectClass(SmartConnect);
 
@@ -17,6 +20,7 @@ const wslink = {
 
     // Disconnect old client
     if (prevClient && prevClient.isConnected()) {
+      // disconnectImageStream(prevClient.getConnection().getSession());
       prevClient.disconnect(-1);
     }
 
@@ -69,6 +73,7 @@ const wslink = {
   },
   disconnect: (client, setClient) => {
     if (client && client.isConnected()) {
+      disconnectImageStream(client.getConnection().getSession())
       client.disconnect(-1);
     }
     setClient(null);

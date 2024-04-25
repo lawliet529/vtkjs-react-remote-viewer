@@ -63,7 +63,7 @@ function App() {
       </AppBar>
       <Box className="appContent">
         <div style={{ position: "relative", width: "100%", height: "100%" }}>
-          <Grid container>
+          {showing && <Grid container>
             <Grid item xs={4} sx={{ position: "relative" }}>
               <RemoteRenderView client={client} viewId="1" />
             </Grid>
@@ -73,7 +73,7 @@ function App() {
             <Grid item xs={4} sx={{ position: "relative" }}>
               <RemoteRenderView client={client} viewId="3" />
             </Grid>
-          </Grid>
+          </Grid>}
         </div>
       </Box>
     </Box>

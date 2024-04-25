@@ -70,6 +70,15 @@ const wslink = {
         console.error(error);
       });
   },
+  disconnect: (context, setClient) => {
+    const client = context.client;
+    if (client && client.isConnected()) {
+      client.disconnect(-1);
+    }
+    context.client = null;
+    setClient(null);
+    console.log("Disconnected");
+  },
   initializeServer: (context) => {
     if (context.client) {
       context.client

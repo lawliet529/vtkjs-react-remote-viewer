@@ -10,6 +10,7 @@ import {
   Box,
   AppBar,
   Grid,
+  Switch,
   Toolbar,
   Typography,
   IconButton,
@@ -22,6 +23,7 @@ function App() {
   const context = useRef({});
   const [client, setClient] = useState(null);
   const [busy, setBusy] = useState(0);
+  const [showing, setShowing] = useState(true);
 
   useEffect(() => {
     wslink.connect(context.current, setClient, setBusy);
@@ -29,6 +31,15 @@ function App() {
 
   const resetCamera = () => {
     wslink.resetCamera(context.current);
+  };
+
+  const handleChange = (event) => {
+    if (event.target.checked) {
+      wslink.connect(context.current, setClient, setBusy);
+    } else {
+      wslink.disconnect(context.current, setClient);
+    }
+    setShowing(event.target.checked);
   };
 
   return (
@@ -40,6 +51,7 @@ function App() {
             Application
           </Typography>
 
+          <Switch checked={showing} onChange={handleChange} />
           <IconButton onClick={resetCamera}>
             <CameraAlt />
           </IconButton>

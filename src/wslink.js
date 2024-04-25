@@ -8,23 +8,21 @@ import { connectImageStream } from "vtk.js/Sources/Rendering/Misc/RemoteView";
 vtkWSLinkClient.setSmartConnectClass(SmartConnect);
 
 const wslink = {
-  connect: (context, setClient, setBusy) => {
+  connect: (prevClient, setClient, setBusy) => {
     // Initiate network connection
     const config = { application: "cone" };
 
     // We suppose that we have dev server and that ParaView/VTK is running on port 1234
     config.sessionURL = `ws://${window.location.hostname}:1234/ws`;
 
-    const client = context.client;
-    if (client && client.isConnected()) {
-      client.disconnect(-1);
-    }
-    let clientToConnect = client;
-    if (!clientToConnect) {
-      clientToConnect = vtkWSLinkClient.newInstance({ protocols });
+    // Disconnect old client
+    if (prevClient && prevClient.isConnected()) {
+      prevClient.disconnect(-1);
     }
 
-    // // Connect to busy store
+    let clientToConnect = vtkWSLinkClient.newInstance({ protocols });
+
+    // Connect to busy store
     clientToConnect.onBusyChange((busy) => {
       setBusy(busy);
     });
@@ -53,14 +51,13 @@ const wslink = {
       .connect(config)
       .then((validClient) => {
         connectImageStream(validClient.getConnection().getSession());
-        context.client = validClient;
-        setClient(context.client);
+        setClient(validClient);
         clientToConnect.endBusy();
 
         // Now that the client is ready let's setup the server for us
-        if (context.client) {
-          console.log(context.client);
-          context.client
+        if (validClient) {
+          console.log(validClient);
+          validClient
             .getRemote()
             .Cone.createVisualization()
             .catch(console.error);
@@ -70,35 +67,22 @@ const wslink = {
         console.error(error);
       });
   },
-  disconnect: (context, setClient) => {
-    const client = context.client;
+  disconnect: (client, setClient) => {
     if (client && client.isConnected()) {
       client.disconnect(-1);
     }
-    context.client = null;
     setClient(null);
     console.log("Disconnected");
   },
-  initializeServer: (context) => {
-    if (context.client) {
-      context.client
-        .getRemote()
-        .Cone.createVisualization()
-        .catch(console.error);
-    }
-  },
-  updateResolution: (context, resolution) => {
-    if (context.client) {
+  updateResolution: (client, resolution) => {
+    if (client) {
       // console.log(resolution);
-      context.client
-        .getRemote()
-        .Cone.updateResolution(resolution)
-        .catch(console.error);
+      client.getRemote().Cone.updateResolution(resolution).catch(console.error);
     }
   },
-  resetCamera: (context) => {
-    if (context.client) {
-      context.client.getRemote().Cone.resetCamera().catch(console.error);
+  resetCamera: (client) => {
+    if (client) {
+      client.getRemote().Cone.resetCamera().catch(console.error);
     }
   },
 };

@@ -1,13 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 // import vtkRemoteView from 'vtk.js/Sources/Rendering/Misc/RemoteView';
-import './RemoteRenderingView.css'
+import "./RemoteRenderingView.css";
 import vtkRemoteView from "vtk.js/Sources/Rendering/Misc/RemoteView";
 
-
-const RemoteRenderView = ({ viewId = '-1', client = null }) => {
+const RemoteRenderView = ({ viewId = "-1", client = null }) => {
   const viewRef = useRef(null);
   const view = useRef(null);
-  
+
   useEffect(() => {
     view.current = vtkRemoteView.newInstance({
       rpcWheelEvent: "viewport.mouse.zoom.wheel",
@@ -27,11 +26,13 @@ const RemoteRenderView = ({ viewId = '-1', client = null }) => {
       view.current.setViewId(viewId);
       view.current.render();
     }
+
+    return () => {
+      window.removeEventListener("resize", view.current.resize);
+    };
   }, [client, viewId]);
 
-  return (
-    <div ref={viewRef} className="container"></div>
-  );
+  return <div ref={viewRef} className="container"></div>;
 };
 
 export default RemoteRenderView;

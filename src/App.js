@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import wslink from "./wslink";
 
@@ -17,27 +17,30 @@ import {
   LinearProgress,
 } from "@mui/material";
 import { CameraAlt } from "@mui/icons-material";
-import RemoteRenderView from "./RemoteRenderingView";
+import RemoteRenderView from "./components/RemoteRenderingView";
 
 function App() {
-  const context = useRef({});
   const [client, setClient] = useState(null);
   const [busy, setBusy] = useState(0);
   const [showing, setShowing] = useState(true);
 
   useEffect(() => {
-    wslink.connect(context.current, setClient, setBusy);
+    setClient((prevClient) => {
+      wslink.connect(prevClient, setClient, setBusy);
+    });
   }, []);
 
   const resetCamera = () => {
-    wslink.resetCamera(context.current);
+    wslink.resetCamera(client);
   };
 
   const handleChange = (event) => {
     if (event.target.checked) {
-      wslink.connect(context.current, setClient, setBusy);
+      setClient((prevClient) => {
+        wslink.connect(prevClient, setClient, setBusy);
+      });
     } else {
-      wslink.disconnect(context.current, setClient);
+      wslink.disconnect(client, setClient);
     }
     setShowing(event.target.checked);
   };
@@ -61,14 +64,14 @@ function App() {
       <Box className="appContent">
         <div style={{ position: "relative", width: "100%", height: "100%" }}>
           <Grid container>
-            <Grid item xs={4} sx={{position: "relative"}}>
-              <RemoteRenderView client={client} viewId="1"/>
+            <Grid item xs={4} sx={{ position: "relative" }}>
+              <RemoteRenderView client={client} viewId="1" />
             </Grid>
-            <Grid item xs={4} sx={{position: "relative"}}>
-              <RemoteRenderView client={client} viewId="2"/>
+            <Grid item xs={4} sx={{ position: "relative" }}>
+              <RemoteRenderView client={client} viewId="2" />
             </Grid>
-            <Grid item xs={4} sx={{position: "relative"}}>
-              <RemoteRenderView client={client} viewId="3"/>
+            <Grid item xs={4} sx={{ position: "relative" }}>
+              <RemoteRenderView client={client} viewId="3" />
             </Grid>
           </Grid>
         </div>

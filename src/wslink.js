@@ -73,7 +73,7 @@ const wslink = {
   },
   disconnect: (client, setClient) => {
     if (client && client.isConnected()) {
-      disconnectImageStream(client.getConnection().getSession())
+      disconnectImageStream(client.getConnection().getSession());
       client.disconnect(-1);
     }
     setClient(null);

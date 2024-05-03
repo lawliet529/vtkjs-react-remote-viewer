@@ -5,10 +5,9 @@ import vtkRemoteView from "vtk.js/Sources/Rendering/Misc/RemoteView";
 
 const RemoteRenderView = ({ viewId = "-1", client = null }) => {
   const viewRef = useRef(null);
-  const view = useRef(null);
 
   useEffect(() => {
-    view.current = vtkRemoteView.newInstance({
+    const view = vtkRemoteView.newInstance({
       rpcWheelEvent: "viewport.mouse.zoom.wheel",
     });
     // default of 0.5 causes 2x size labels on high-DPI screens. 1 good for demo, not for production.
@@ -16,19 +15,20 @@ const RemoteRenderView = ({ viewId = "-1", client = null }) => {
     //   view.current.setInteractiveRatio(1);
     // }
 
-    view.current.setContainer(viewRef.current);
-    window.addEventListener("resize", view.current.resize);
+    view.setContainer(viewRef.current);
+    window.addEventListener("resize", view.resize);
 
     if (client) {
       // console.log('RemoteRenderView', this.viewId);
       const session = client.getConnection().getSession();
-      view.current.setSession(session);
-      view.current.setViewId(viewId);
-      view.current.render();
+      view.setSession(session);
+      view.setViewId(viewId);
+      view.render();
     }
 
     return () => {
-      window.removeEventListener("resize", view.current.resize);
+      window.removeEventListener("resize", view.resize);
+      if (view.getSession()) view.delete();
     };
   }, [client, viewId]);
 

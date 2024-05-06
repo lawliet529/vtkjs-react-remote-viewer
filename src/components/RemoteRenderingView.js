@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-// import vtkRemoteView from 'vtk.js/Sources/Rendering/Misc/RemoteView';
 import "./RemoteRenderingView.css";
 import vtkRemoteView from "vtk.js/Sources/Rendering/Misc/RemoteView";
 
@@ -28,7 +27,7 @@ const RemoteRenderView = ({ viewId = "-1", client = null }) => {
 
     return () => {
       window.removeEventListener("resize", view.resize);
-      if (view.getSession()) view.delete();
+      if (client && client.isConnected() && view.getSession()) view.delete();
     };
   }, [client, viewId]);
 

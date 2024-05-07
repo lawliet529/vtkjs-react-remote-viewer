@@ -37,11 +37,11 @@ if '--virtual-env' in sys.argv:
 from wslink import server
 from wslink import register as exportRpc
 
-from vtk.web import wslink as vtk_wslink
-from vtk.web import protocols as vtk_protocols
+from vtkmodules.web import wslink as vtk_wslink
+from vtkmodules.web import protocols as vtk_protocols
 
 import vtk
-from vtk_protocol import Viewer
+from vtk_protocol2 import MPRViewer
 
 import logging
 
@@ -73,7 +73,7 @@ class _Server(vtk_wslink.ServerProtocol):
         self.registerVtkWebProtocol(vtk_protocols.vtkWebPublishImageDelivery(decode=False))
 
         # Custom API
-        self.registerVtkWebProtocol(Viewer())
+        self.registerVtkWebProtocol(MPRViewer())
 
         # tell the C++ web app to use no encoding.
         # ParaViewWebPublishImageDelivery must be set to decode=False to match.
